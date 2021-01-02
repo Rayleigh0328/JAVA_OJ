@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode._17;
 
 public class P1706 {
     private int n,m;

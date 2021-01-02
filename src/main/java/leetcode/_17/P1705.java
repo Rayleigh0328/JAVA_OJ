@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode._17;
 
 import java.util.Optional;
 import java.util.TreeMap;

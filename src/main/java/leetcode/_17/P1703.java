@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode._17;
 
 import lib.array.range_sum.RangeSumCalculator;
 

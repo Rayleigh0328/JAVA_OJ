@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode._17;
 
 import javafx.util.Pair;
 

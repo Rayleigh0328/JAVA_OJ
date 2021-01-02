@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode._17;
 
 import lib.string.trie.BinaryTrieNodeWithData;
 import lib.string.trie.ITrieNode;
