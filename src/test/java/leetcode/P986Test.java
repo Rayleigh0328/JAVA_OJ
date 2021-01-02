@@ -1,6 +1,5 @@
 package leetcode;
 
-import leetcode._16.P1697;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

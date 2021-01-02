@@ -30,4 +30,23 @@ public class IntervalHelper {
         T r = ArithmeticHelper.max(a.getRight(), b.getRight());
         return new Interval<>(l,r);
     }
+
+    public static <T extends Comparable<T>> boolean onLeft(IInterval<T> x, IInterval<T> y) {
+        return x.getRight().compareTo(y.getLeft()) < 0;
+    }
+
+    public static <T extends Comparable<T>> boolean onRight(IInterval<T> x, IInterval<T> y) {
+        return x.getLeft().compareTo(y.getRight()) > 0;
+    }
+
+    public static IInterval<Integer> mapIntArrayToInterval(int[] a){
+        return new Interval(a[0], a[1]);
+    }
+
+    public static int[] mapIntervalToIntArray(IInterval<Integer> interval){
+        int [] result = new int [2];
+        result[0] = interval.getLeft();
+        result[1] = interval.getRight();
+        return result;
+    }
 }
