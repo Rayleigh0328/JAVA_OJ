@@ -41,4 +41,15 @@ public class ArithmeticHelper {
         if (x.compareTo(y) > 0) return x;
         return y;
     }
+
+    // calculate (x ^ y) % p
+    public static long powerMode(long x, long y, long p) {
+        long result = 1;
+        while (y > 0){
+            if ((y & 1) == 1) result = (result * x) % p;
+            y = (y >> 1);
+            x = (x * x) % p ;
+        }
+        return result;
+    }
 }
