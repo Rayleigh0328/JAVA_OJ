@@ -1,4 +1,4 @@
-package lib;
+package lib.common;
 
 public class ArithmeticHelper {
 
