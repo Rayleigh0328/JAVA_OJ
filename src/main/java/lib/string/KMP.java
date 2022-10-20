@@ -40,4 +40,8 @@ public class KMP {
         }
         return t;
     }
+
+    public int[] getPhi() {
+        return phi;
+    }
 }
