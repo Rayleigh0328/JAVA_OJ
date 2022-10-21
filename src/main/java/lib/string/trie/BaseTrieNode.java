@@ -1,25 +1,40 @@
 package lib.string.trie;
 
-import java.util.HashMap;
-import java.util.Map;
+public abstract class BaseTrieNode<E> implements ITrieNode<E> {
 
-public class BaseTrieNode implements ITrieNode{
-
-    protected Map<Character, ITrieNode> children;
+    protected E data;
+    protected Integer prefixCount;
+    protected Integer endCount;
 
     public BaseTrieNode() {
-        children = new HashMap<>();
+        this(null);
+    }
+
+    public BaseTrieNode(E data) {
+        this.data = data;
+        prefixCount = 0;
+        endCount = 0;
+    }
+
+    protected abstract ITrieNode<E> setNext(Character ch, ITrieNode<E> target);
+
+    @Override
+    public E getData() {
+        return data;
     }
 
     @Override
-    public ITrieNode moveTo(Character ch) {
-        return getChildren().get(ch);
+    public void setData(E data) {
+        this.data = data;
     }
 
     @Override
-    public ITrieNode expandTo(Character ch) {
-        ITrieNode next = getChildren().get(ch);
-        if (next != null) return next;
+    public ITrieNode<E> expandTo(Character ch) {
+        ++prefixCount;
+        ITrieNode<E> next = moveTo(ch);
+        if (next != null) {
+            return next;
+        }
 
         try {
             next = this.getClass().newInstance();
@@ -27,11 +42,26 @@ public class BaseTrieNode implements ITrieNode{
             e.printStackTrace();
             return null;
         }
-        getChildren().put(ch, next);
-        return next;
+        return setNext(ch, next);
     }
 
-    private Map<Character, ITrieNode> getChildren() {
-        return children;
+
+    @Override
+    public Integer getWordEndCount() {
+        return endCount;
+    }
+
+    @Override
+    public Integer setWordEndCount(int value) {
+        return endCount = value;
+    }
+
+    @Override
+    public Integer getWordPrefixCount() {
+        return prefixCount;
+    }
+
+    public Integer setWordPrefixCount(int value) {
+        return prefixCount = value;
     }
 }

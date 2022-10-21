@@ -2,49 +2,50 @@ package lib.string.trie;
 
 import java.util.List;
 
-public class Trie <E extends ITrieNode> {
+public class Trie {
 
-    private E root;
+    private ITrieNode root;
 
-    public Trie(E root){
+    public Trie(ITrieNode root){
         this.root = root;
     }
 
-    public E getRoot() {
+
+    public ITrieNode getRoot() {
         return root;
     }
 
-    public E insertString(String st) {
-        E cur = root;
+    public ITrieNode insertString(String st) {
+        ITrieNode cur = root;
         for (int i=0; i<st.length(); ++i) {
             Character ch = st.charAt(i);
-            cur = (E) cur.expandTo(ch);
+            cur = cur.expandTo(ch);
+        }
+        cur.setWordEndCount(cur.getWordEndCount() + 1);
+        return cur;
+    }
+
+    public ITrieNode find(String st){
+        ITrieNode cur = root;
+        for (int i=0; i<st.length(); ++i){
+            if (cur == null) return null;
+            cur = cur.moveTo(st.charAt(i));
         }
         return cur;
     }
 
-    public E find(String st){
-        E cur = root;
+    public ITrieNode findWithPreference(String st, List<Character> preference) {
+        ITrieNode cur = root, tentative;
         for (int i=0; i<st.length(); ++i){
             if (cur == null) return null;
             Character ch = st.charAt(i);
-            cur = (E) cur.moveTo(ch);
-        }
-        return cur;
-    }
-
-    public E findWithPreference(String st, List<Character> preference) {
-        E cur = root, tentative;
-        for (int i=0; i<st.length(); ++i){
-            if (cur == null) return null;
-            Character ch = st.charAt(i);
-            tentative = (E) cur.moveTo(ch);
+            tentative = cur.moveTo(ch);
             if (tentative != null){
                 cur = tentative;
                 continue;
             }
             for (Character preferredChar : preference) {
-                tentative = (E) cur.moveTo(preferredChar);
+                tentative = cur.moveTo(preferredChar);
                 if (tentative != null) {
                     cur = tentative;
                     break;
