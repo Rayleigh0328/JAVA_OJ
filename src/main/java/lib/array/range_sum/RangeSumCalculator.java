@@ -1,6 +1,6 @@
 package lib.array.range_sum;
 
-import lib.ArithmeticHelper;
+import lib.common.ArithmeticHelper;
 
 import java.util.ArrayList;
 import java.util.List;

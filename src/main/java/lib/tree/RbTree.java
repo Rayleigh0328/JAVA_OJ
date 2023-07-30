@@ -52,7 +52,6 @@ public class RbTree<T extends Comparable<T>> {
     public boolean erase(T val) {
         RbTreeNode<T> n = findNode(val);
         if (n == null) return false;
-
         deleteNode(n);
         return true;
     }
@@ -103,6 +102,20 @@ public class RbTree<T extends Comparable<T>> {
     }
 
     /**** private helper functions ****/
+
+    private boolean validateRbTree() {
+        dfsValidateRbTree(root);
+        return true;
+    }
+
+    private int dfsValidateRbTree(RbTreeNode<T> n) {
+       if (n == null) return 1;
+       int leftDepth = dfsValidateRbTree(n.left);
+       int rightDepth = dfsValidateRbTree(n.right);
+       assert(leftDepth == rightDepth);
+       if (n.color == Color.BLACK) return leftDepth + 1;
+       return leftDepth;
+    }
 
     private int countLeq(RbTreeNode<T> n, T target) {
         if (n == null) return 0;
@@ -175,16 +188,16 @@ public class RbTree<T extends Comparable<T>> {
 
     // return
     private void deleteNode(RbTreeNode<T> n) {
-        // remove root case
         if (n == root && n.left == null && n.right == null) {
+            // root is the only node in the tree
             root = null;
             return;
         }
 
-        // if n has two non-empty child
-        // then find largest node x in left tree
-        // swap data in n and x, delete x instead
         if (n.left != null && n.right != null) {
+            // if n has two non-empty child
+            // then find largest node x in left tree
+            // swap data in n and x, delete x instead
             RbTreeNode<T> toReplace = getMaxNode(n.left);
 
             T tmp = n.data;
@@ -195,41 +208,52 @@ public class RbTree<T extends Comparable<T>> {
             return;
         }
 
-        eraseUpdateSize(n);
-
         RbTreeNode p = getParent(n);
         // now n has at most 1 non-empty child
         RbTreeNode<T> c = n.left == null ? n.right : n.left;
+
+        // case 1: n is red, c must be black
+        // case 1.1 if c is null, will not violate property
+        // case 1.2 if c is not null, will not violate property either
+        if (n.color == Color.RED) {
+            assert(getColor(c) == Color.BLACK);
+            eraseUpdateSize(n);
+            replaceNode(n,c);
+            return;
+        }
+
+        // case 2: n is black, c is red, simply change c to black
+        if (getColor(c) == Color.RED) {
+            c.color = Color.BLACK;
+            eraseUpdateSize(n);
+            replaceNode(n,c);
+            return;
+        }
+
+        // case 3: both n,c is black
+        eraseBalance(n);
+        eraseUpdateSize(n);
+        replaceNode(n);
+    }
+
+    private void replaceNode(RbTreeNode<T> n) {
+        assert(n.left == null || n.right == null);
+        RbTreeNode<T> c = (n.left == null ? n.right : n.left);
+        replaceNode(n,c);
+    }
+
+    private void replaceNode(RbTreeNode<T> n, RbTreeNode<T> c){
+        RbTreeNode<T> p = getParent(n);
         // replace n by c, note c can be null
         if (c != null) {
             c.parent = p;
         }
         if (p == null) { // n is root
-           root = c;
+            root = c;
         }
         else {
             if (p.left == n) p.left = c;
             else p.right = c;
-        }
-
-        // case 1: n is red, c must be black
-        // case 1.1 if c is null, will not violate property
-        // case 1.2 if c is not null, will not violate property either
-        // do nothing in case 1
-        if (n.color == Color.RED) return;
-
-        // case 2: n is black, c is red, simply change c to black
-        if (c.color == Color.RED) {
-            c.color = Color.BLACK;
-            return;
-        }
-
-        // case 3: both n, c is black then black depth through c is reduced by 1
-        if (c == null) {
-            eraseBalance(p);
-        }
-        else {
-            eraseBalance(c);
         }
     }
 
@@ -241,6 +265,7 @@ public class RbTree<T extends Comparable<T>> {
 
     // re-balance because black depth of sub-tree rooted at n is reduced by 1
     private void eraseBalance(RbTreeNode<T> n) {
+
         assert(n != null && n.color == Color.BLACK);
         // case 1: n is the root
         if (n.parent == null) return;
@@ -249,9 +274,9 @@ public class RbTree<T extends Comparable<T>> {
         RbTreeNode<T> s = getSibling(n);
         // because n is black, then its sibling must exist, otherwise property 5) is invalid
         assert(p != null && s != null);
+        // note sl, sr can be null
         RbTreeNode<T> sl = s.left;
         RbTreeNode<T> sr = s.right;
-        // note sl, sr might be null
 
         // case 2: p,s,sl,sr all black, paint s to red and recursion on p
         if (p.color == Color.BLACK && s.color == Color.BLACK && getColor(sl) == Color.BLACK && getColor(sr) == Color.BLACK) {
@@ -260,13 +285,16 @@ public class RbTree<T extends Comparable<T>> {
             return;
         }
 
-        // case 3: s is red. then sl, sr, p must be black. rotate s to be the new root, change color of s and p
-        // black depth to n will be increased by 1
+        // case 3: s is red. then sl, sr, p must be black.
+        // rotate s to be the new root
+        // paint s to black and p to red
+        // now case3 is converted to case 4,5,6
         if (s.color == Color.RED) {
             s.color = Color.BLACK;
             p.color = Color.RED;
             if (s == p.right) rotate(p, Direction.LEFT);
             else rotate(p, Direction.RIGHT);
+            eraseBalance(n);
             return;
         }
 
@@ -287,14 +315,14 @@ public class RbTree<T extends Comparable<T>> {
             rotate(p, Direction.LEFT);
             return;
         }
-        if (p.left == s && getColor(sl) == Color.RED) {
+        else if (p.left == s && getColor(sl) == Color.RED) {
             s.color = p.color;
             p.color = sl.color = Color.BLACK;
             rotate(p, Direction.RIGHT);
             return;
         }
 
-        // case 6: the remaining case, where s is black, inner child of s is red, outer child of s is black
+        // case 5: the remaining case, where s is black, inner child of s is red, outer child of s is black
         // rotate s so that the inner child is new root, swap color of s and inner child
         // reduce to case 5
         if (p.right == s) {

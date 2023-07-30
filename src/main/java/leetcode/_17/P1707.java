@@ -1,6 +1,6 @@
 package leetcode._17;
 
-import lib.string.trie.BinaryTrieNodeWithData;
+import lib.string.trie.BinaryTrieNode;
 import lib.string.trie.ITrieNode;
 import lib.string.trie.Trie;
 
@@ -22,13 +22,13 @@ public class P1707 {
         Arrays.sort(queries, Comparator.comparingInt(x -> x[1]));
 
         List<Character> prefList = Arrays.asList('0','1');
-        BinaryTrieNodeWithData<Integer> root = new BinaryTrieNodeWithData<>();
+        BinaryTrieNode<Integer> root = new BinaryTrieNode<>();
         Trie trie = new Trie(root);
 
         int data, limit, tmp;
         String str;
         ITrieNode node;
-        BinaryTrieNodeWithData<Integer> nodeWithData;
+        BinaryTrieNode<Integer> nodeWithData;
         // construct
         for (int[] query : queries) {
             data = query[0];
@@ -37,12 +37,12 @@ public class P1707 {
                 tmp = s.first();
                 s.remove(tmp);
                 str = convertToBitString(tmp);
-                ((BinaryTrieNodeWithData<Integer>) trie.insertString(str)).setData(tmp);
+                ((BinaryTrieNode<Integer>) trie.insertString(str)).setData(tmp);
             }
             str = convertToBitString(~data);
             node = trie.findWithPreference(str, prefList);
             if (node != null) {
-                nodeWithData = ((BinaryTrieNodeWithData<Integer>) node);
+                nodeWithData = ((BinaryTrieNode<Integer>) node);
                 if (nodeWithData.getData() != null) {
                     query[3] = (nodeWithData.getData() ^ data);
                 }

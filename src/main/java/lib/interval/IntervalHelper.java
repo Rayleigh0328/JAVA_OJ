@@ -1,6 +1,6 @@
 package lib.interval;
 
-import lib.ArithmeticHelper;
+import lib.common.ArithmeticHelper;
 
 public class IntervalHelper {
     public static <T extends Comparable<T>> boolean isOpenIntervalOverlap(IInterval<T> a, IInterval<T> b){

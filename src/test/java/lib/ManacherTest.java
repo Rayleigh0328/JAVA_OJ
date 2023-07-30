@@ -16,6 +16,7 @@ public class ManacherTest {
         logger.info("info");
         logger.warn("warn");
         logger.error("error");
+        logger.info("[{}]", String.join(",", "a", "b", "c"));
     }
 
     @Test
