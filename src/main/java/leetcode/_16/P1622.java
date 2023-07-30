@@ -1,9 +1,6 @@
 package leetcode._16;
 
-import lib.ArithmeticHelper;
-
-import java.util.ArrayList;
-import java.util.List;
+import lib.common.ArithmeticHelper;
 
 public class P1622 {
     static class Fancy {
